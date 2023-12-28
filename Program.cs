@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 //using Sentry;
 using Serilog;
 using Serilog.Events;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,20 +16,30 @@ builder.Configuration.AddJsonFile("appsettings.json");
 //    o.TracesSampleRate = 1.0;
 //});
 
-builder.Host.UseSerilog();
+builder.Host.UseSerilog((context, services, configuration) => configuration
+                    .ReadFrom.Configuration(context.Configuration)
+                    .ReadFrom.Services(services)
+                    .Enrich.FromLogContext()
+                    //.WriteTo.Console()
+                    //.WriteTo.Sentry(s =>
+                    //{
+                    //    s.Dsn = "";
+                    //    s.AttachStacktrace = true;
+                    //    s.Debug = true;
+                    //    s.EnableTracing = true;
+                    //    s.SendDefaultPii = true;
+                    //    s.DiagnosticLevel = Sentry.SentryLevel.Debug;
+                    //})
+                    );
+
+Serilog.Debugging.SelfLog.Enable(msg => Console.WriteLine(msg));
+
+var file = File.CreateText($"{builder.Environment.ContentRootPath}/{"InternalSerilogErrors.txt"}");
+Serilog.Debugging.SelfLog.Enable(TextWriter.Synchronized(file));
 
 Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Configuration)
-            .WriteTo.Sentry(o =>
-            {
-                // Debug and higher are stored as breadcrumbs (default is Information)
-                o.MinimumBreadcrumbLevel = LogEventLevel.Debug;
-                // Warning and higher is sent as event (default is Error)
-                o.MinimumEventLevel = LogEventLevel.Warning;
-                o.Dsn = "Put Your DSN";
-                o.Debug = true;
-            })
-            .CreateLogger();
+                .ReadFrom.Configuration(builder.Configuration)
+                .CreateBootstrapLogger();
 
 // Add services to the container.
 
