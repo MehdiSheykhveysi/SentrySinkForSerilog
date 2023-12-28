@@ -1,1 +1,1 @@
-# WebApplication1
+# Sentry Sink For serilog
