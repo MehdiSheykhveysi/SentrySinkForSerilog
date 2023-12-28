@@ -4,11 +4,15 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>096b2b77-f82b-4cd4-9406-6ce277c5c348</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
     <!--<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.25" /> 
 	  <PackageReference Include="Sentry.AspNetCore" Version="3.41.3" />-->
+	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
 	  <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
 	  <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
 	  <PackageReference Include="Sentry.Serilog" Version="3.41.3" />
